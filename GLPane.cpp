@@ -162,8 +162,9 @@ void GLPane::render(wxPaintEvent &evt)
         m_pObj->unbindAll();
         glFlush();
         SwapBuffers();
-        std::cout << '\r' << estimateFPS(m_tStart, m_frameCnt) << " FPS";
         m_frameCnt++;
+        std::cout << '\r' << estimateFPS(m_tStart, m_frameCnt) << " FPS";
+       
     }
 }
 

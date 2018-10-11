@@ -11,8 +11,8 @@ private:
     MainFrame *m_pFrame;
     bool m_isMinimized;
 
-    virtual bool OnInit();
-    void onIdle(wxIdleEvent &evt);
+    virtual bool OnInit() override;
+    void OnIdle(wxIdleEvent &evt);
     void prepareMainFrame();
 };
 

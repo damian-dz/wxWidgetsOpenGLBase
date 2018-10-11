@@ -18,11 +18,11 @@ bool OpenGLApp::OnInit()
 {
     openDebuggingWindow();
     prepareMainFrame();
-    Connect(wxID_ANY, wxEVT_IDLE, wxIdleEventHandler(OpenGLApp::onIdle));
+    Connect(wxID_ANY, wxEVT_IDLE, wxIdleEventHandler(OpenGLApp::OnIdle));
     return true;
 }
 
-void OpenGLApp::onIdle(wxIdleEvent &evt)
+void OpenGLApp::OnIdle(wxIdleEvent &evt)
 {
     if (!m_pFrame->IsIconized()) {
         m_pFrame->updateGLPane();
