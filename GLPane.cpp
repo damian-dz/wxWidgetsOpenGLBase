@@ -143,6 +143,7 @@ void GLPane::prepareGLObjects()
     m_pObj = new Object(vertices, indices3);
     m_pObj->bindAll();
     m_pObj->fillBuffers();
+    m_pObj->unbindAll();
 
     m_pShader = new Shader();
     m_pShader->loadFromFile(GL_VERTEX_SHADER, "Basic.vert");
