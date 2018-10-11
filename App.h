@@ -9,6 +9,8 @@ class OpenGLApp : public wxApp
 {
 private:
     MainFrame *m_pFrame;
+    bool m_isMinimized;
+
     virtual bool OnInit();
     void onIdle(wxIdleEvent &evt);
     void prepareMainFrame();

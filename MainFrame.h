@@ -18,7 +18,7 @@ public:
 private:
     wxMenuBar *m_pMenuBar;
     wxMenu *m_pFileMenu;
-    GLPane *m_pGlPane;;
+    GLPane *m_pGlPane;
 
     void prepareGLPane();
     void prepareMenus();

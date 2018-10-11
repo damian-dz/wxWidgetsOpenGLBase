@@ -24,8 +24,10 @@ bool OpenGLApp::OnInit()
 
 void OpenGLApp::onIdle(wxIdleEvent &evt)
 {
-    m_pFrame->updateGLPane();
-    evt.RequestMore();
+    if (!m_pFrame->IsIconized()) {
+        m_pFrame->updateGLPane();
+        evt.RequestMore();
+    }
 }
 
 void OpenGLApp::prepareMainFrame()
