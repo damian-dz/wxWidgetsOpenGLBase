@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-Object::Object()
+Object::Object() : m_pShader(new Shader)
 {
     glGenVertexArrays(1, &m_vaoID);
     glGenBuffers(1, &m_vertexID);
@@ -12,7 +12,7 @@ Object::Object()
 }
 
 Object::Object(const std::vector<Vertex> &vertices, const std::vector<Index3> &indices3)
-    : m_vertices(vertices), m_indices3(indices3)
+    : m_vertices(vertices), m_indices3(indices3), m_pShader(new Shader)
 {
     glGenBuffers(1, &m_vertexID);
     glGenBuffers(1, &m_index3ID);
@@ -24,6 +24,9 @@ Object::~Object()
     this->emptyAll();
     m_vertices.clear();
     m_indices3.clear();
+    m_pShader->unbind();
+    m_pShader->deleteProgram();
+    delete m_pShader;
 }
 
 void Object::addVertex(const Vertex &vtx)
@@ -40,6 +43,7 @@ void Object::bindAll()
 {
     glBindVertexArray(m_vaoID);
     this->bindBuffers();
+    m_pShader->bind();
 }
 
 void Object::bindBuffers()
@@ -53,6 +57,24 @@ void Object::bindBuffers()
 void Object::draw()
 {
     glDrawElements(GL_TRIANGLES, getByteSizeOfIndices3(), GL_UNSIGNED_INT, 0);
+}
+
+void Object::emptyAll()
+{
+    this->emptyBuffers();
+    glDeleteVertexArrays(1, &m_vaoID);
+}
+
+void Object::emptyBuffers()
+{
+    glDeleteBuffers(1, &m_vertexID);
+    glDeleteBuffers(1, &m_index3ID);
+}
+
+void Object::fillBuffers()
+{
+    glBufferData(GL_ARRAY_BUFFER, getByteSizeOfVertices(), m_vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, getByteSizeOfIndices3(), m_indices3.data(), GL_STATIC_DRAW);
 }
 
 size_t Object::getIndex3Count()
@@ -90,22 +112,14 @@ uint32_t Object::getVertexID()
     return m_vertexID;
 }
 
-void Object::emptyAll()
+void Object::loadShaderFromFile(GLenum type, const std::string &filename)
 {
-    this->emptyBuffers();
-    glDeleteVertexArrays(1, &m_vaoID);
+    m_pShader->loadFromFile(type, filename);
 }
 
-void Object::emptyBuffers()
+void Object::createAndLinkShaderProgram()
 {
-    glDeleteBuffers(1, &m_vertexID);
-    glDeleteBuffers(1, &m_index3ID);
-}
-
-void Object::fillBuffers()
-{
-    glBufferData(GL_ARRAY_BUFFER, getByteSizeOfVertices(), m_vertices.data(), GL_STATIC_DRAW);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, getByteSizeOfIndices3(), m_indices3.data(), GL_STATIC_DRAW);
+    m_pShader->createAndLinkProgram();
 }
 
 void Object::setIndices3(const std::vector<Index3> &indices3)
@@ -124,6 +138,7 @@ void Object::unbindAll()
 {
     this->unbindBuffers();
     glBindVertexArray(0);
+    m_pShader->unbind();
 }
 
 void Object::unbindBuffers()

@@ -3,6 +3,7 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+#include "Shader.h"
 #include "Vertex.h"
 
 #include <vector>
@@ -20,6 +21,7 @@ private:
     uint32_t m_vertexID;
     uint32_t m_index3ID;
     uint32_t m_vaoID;
+    Shader *m_pShader;
 
 public:
     void addVertex(const Vertex &vtx);
@@ -27,6 +29,9 @@ public:
     void bindAll();
     void bindBuffers();
     void draw();
+    void emptyAll();
+    void emptyBuffers();
+    void fillBuffers();
     size_t getIndex3Count();
     size_t getVertexCount();
     size_t getByteSizeOfIndices3();
@@ -34,9 +39,8 @@ public:
     uint32_t getIndex3ID();
     uint32_t getVaoID();
     uint32_t getVertexID();
-    void emptyAll();
-    void emptyBuffers();
-    void fillBuffers();
+    void loadShaderFromFile(GLenum type, const std::string &filename);
+    void createAndLinkShaderProgram();
     void setIndices3(const std::vector<Index3> &indices3);
     void setVertices(const std::vector<Vertex> &vertices);
     void unbindAll();

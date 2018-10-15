@@ -27,11 +27,11 @@ void generateIndices(Index3 *indices, int resX, int resY, IdxMode mode)
             for (int x = 0; x < resX - 1; ++x) {
                 int j = y * resX + x;
                 indices[i].frst = j;
-                indices[i].scnd = j + 1;
+                indices[i].scnd = j + resX + 1;
                 indices[i].thrd = j + resX;
-                indices[i + 1].frst = j + 1;
-                indices[i + 1].scnd = j + resX + 1;
-                indices[i + 1].thrd = j + resX;
+                indices[i + 1].frst = j;
+                indices[i + 1].scnd = j + 1;
+                indices[i + 1].thrd = j + resX + 1;
                 i += 2;
             }
         }
@@ -40,11 +40,11 @@ void generateIndices(Index3 *indices, int resX, int resY, IdxMode mode)
             for (int x = 0; x < resX - 1; ++x) {
                 int j = y * resX + x;
                 indices[i].frst = j;
-                indices[i].scnd = j + resX + 1;
+                indices[i].scnd = j + 1;
                 indices[i].thrd = j + resX;
-                indices[i + 1].frst = j;
-                indices[i + 1].scnd = j + 1;
-                indices[i + 1].thrd = j + resX + 1;
+                indices[i + 1].frst = j + 1;
+                indices[i + 1].scnd = j + resX + 1;
+                indices[i + 1].thrd = j + resX;
                 i += 2;
             }
         }
@@ -110,9 +110,6 @@ GLPane::~GLPane()
 {
     delete m_pContext;
     delete m_pObj;
-    m_pShader->unbind();
-    m_pShader->deleteProgram();
-    delete m_pShader;
 }
 
 void GLPane::resized(wxSizeEvent &WXUNUSED(evt))
@@ -137,19 +134,16 @@ void GLPane::prepareGLObjects()
     constexpr int HEIGHT = 40;
     std::vector<Vertex> vertices(HEIGHT * WIDTH);
     std::vector<Index3> indices3((HEIGHT - 1) * (WIDTH - 1) * 2);
-    generatePoints(vertices.data(), -0.8, 0.8, -0.8, 0.8, WIDTH, HEIGHT);
-    generateIndices(indices3.data(), WIDTH, HEIGHT, IdxMode::ALTER);
+    generatePoints(vertices.data(), -0.9, 0.9, -0.9, 0.9, WIDTH, HEIGHT);
+    generateIndices(indices3.data(), WIDTH, HEIGHT, IdxMode::BL2TR);
 
     m_pObj = new Object(vertices, indices3);
+    m_pObj->loadShaderFromFile(GL_VERTEX_SHADER, "Basic.vert");
+    m_pObj->loadShaderFromFile(GL_FRAGMENT_SHADER, "Basic.frag");
+    m_pObj->createAndLinkShaderProgram();
     m_pObj->bindAll();
     m_pObj->fillBuffers();
-    m_pObj->unbindAll();
-
-    m_pShader = new Shader();
-    m_pShader->loadFromFile(GL_VERTEX_SHADER, "Basic.vert");
-    m_pShader->loadFromFile(GL_FRAGMENT_SHADER, "Basic.frag");
-    m_pShader->createAndLinkProgram();
-    m_pShader->bind();
+    m_pObj->unbindAll();  
 }
 
 void GLPane::render(wxPaintEvent &evt)
