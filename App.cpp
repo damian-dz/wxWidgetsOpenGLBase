@@ -1,5 +1,4 @@
 #include "App.h"
-#include "MainFrame.h"
 
 extern "C" {
 	__declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;

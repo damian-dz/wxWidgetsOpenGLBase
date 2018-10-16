@@ -42,7 +42,7 @@ void Shader::loadFromFile(GLenum type, const std::string &filename)
     file.open(filename.c_str(), std::ios_base::in);
     if (file) {
         std::string line, buffer;
-        while (getline(file, line)) {
+        while (std::getline(file, line)) {
             buffer += line;
             buffer += "\r\n";
         }
@@ -60,7 +60,7 @@ void Shader::loadFromFile(const std::string &filename)
     if (file) {
         std::stringstream ss[3];
         std::string line;
-        while (getline(file, line)) {
+        while (std::getline(file, line)) {
             if (line.find("#shader") != std::string::npos) {
                 if (line.find("vertex") != std::string::npos) {
                     type = VERTEX_SHADER;
@@ -82,6 +82,8 @@ void Shader::loadFromFile(const std::string &filename)
         if (ss[2].rdbuf()->in_avail() > 0) {
             loadFromString(GL_GEOMETRY_SHADER, ss[2].str());
         }
+    } else {
+        std::cerr << "Error loading the shader: " << filename << std::endl;
     }
 }
 
