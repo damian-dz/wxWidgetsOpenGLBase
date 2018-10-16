@@ -1,5 +1,7 @@
 #include "Shader.h"
 
+#include <sstream>
+
 Shader::Shader() : m_totalShaders(0)
 {
     for (int i = 0; i < 3; ++i) {
@@ -50,6 +52,39 @@ void Shader::loadFromFile(GLenum type, const std::string &filename)
     }
 }
 
+void Shader::loadFromFile(const std::string &filename)
+{
+    std::ifstream file;
+    file.open(filename.c_str(), std::ios_base::in);
+    ShaderType type = NONE;
+    if (file) {
+        std::stringstream ss[3];
+        std::string line;
+        while (getline(file, line)) {
+            if (line.find("#shader") != std::string::npos) {
+                if (line.find("vertex") != std::string::npos) {
+                    type = VERTEX_SHADER;
+                } else if (line.find("fragment") != std::string::npos) {
+                    type = FRAGMENT_SHADER;
+                } else if (line.find("geometry") != std::string::npos) {
+                    type = GEOMETRY_SHADER;
+                }
+            } else {
+                ss[(int)type] << line << "\r\n";
+            }
+        }
+        if (ss[0].rdbuf()->in_avail() > 0) {
+            loadFromString(GL_VERTEX_SHADER, ss[0].str());
+        }
+        if (ss[1].rdbuf()->in_avail() > 0) {
+            loadFromString(GL_FRAGMENT_SHADER, ss[1].str());
+        }
+        if (ss[2].rdbuf()->in_avail() > 0) {
+            loadFromString(GL_GEOMETRY_SHADER, ss[2].str());
+        }
+    }
+}
+
 void Shader::createAndLinkProgram()
 {
     m_program = glCreateProgram();
@@ -92,6 +127,11 @@ void Shader::addAttribute(const std::string &attribute)
 void Shader::addUniform(const std::string &uniform)
 {
     m_uniformLocationList[uniform] = glGetUniformLocation(m_program, uniform.c_str());
+}
+
+GLuint Shader::getProgramID()
+{
+    return m_program;
 }
 
 void Shader::deleteProgram()

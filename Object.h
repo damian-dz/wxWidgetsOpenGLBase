@@ -21,7 +21,8 @@ private:
     uint32_t m_vertexID;
     uint32_t m_index3ID;
     uint32_t m_vaoID;
-    Shader *m_pShader;
+    std::vector<Shader> m_shaders;
+    int m_activeShdr;
 
 public:
     void addVertex(const Vertex &vtx);
@@ -39,8 +40,11 @@ public:
     uint32_t getIndex3ID();
     uint32_t getVaoID();
     uint32_t getVertexID();
+    void addShaderSlot();
     void loadShaderFromFile(GLenum type, const std::string &filename);
+    void loadShaderFromFile(const std::string &filename);
     void createAndLinkShaderProgram();
+    void setActiveShaderSlot(int idx);
     void setIndices3(const std::vector<Index3> &indices3);
     void setVertices(const std::vector<Vertex> &vertices);
     void unbindAll();

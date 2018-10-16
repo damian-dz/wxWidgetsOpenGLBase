@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-Object::Object() : m_pShader(new Shader)
+Object::Object() : m_activeShdr(0)
 {
     glGenVertexArrays(1, &m_vaoID);
     glGenBuffers(1, &m_vertexID);
@@ -12,7 +12,7 @@ Object::Object() : m_pShader(new Shader)
 }
 
 Object::Object(const std::vector<Vertex> &vertices, const std::vector<Index3> &indices3)
-    : m_vertices(vertices), m_indices3(indices3), m_pShader(new Shader)
+    : m_vertices(vertices), m_indices3(indices3), m_activeShdr(0)
 {
     glGenBuffers(1, &m_vertexID);
     glGenBuffers(1, &m_index3ID);
@@ -24,9 +24,12 @@ Object::~Object()
     this->emptyAll();
     m_vertices.clear();
     m_indices3.clear();
-    m_pShader->unbind();
-    m_pShader->deleteProgram();
-    delete m_pShader;
+    glUseProgram(0);
+    for (Shader shader : m_shaders) {
+        shader.unbind();
+        shader.deleteProgram();
+    }
+    m_shaders.clear();
 }
 
 void Object::addVertex(const Vertex &vtx)
@@ -43,7 +46,7 @@ void Object::bindAll()
 {
     glBindVertexArray(m_vaoID);
     this->bindBuffers();
-    m_pShader->bind();
+    m_shaders[m_activeShdr].bind();
 }
 
 void Object::bindBuffers()
@@ -112,14 +115,31 @@ uint32_t Object::getVertexID()
     return m_vertexID;
 }
 
+void Object::addShaderSlot()
+{
+    m_shaders.push_back(Shader());
+    m_activeShdr = m_shaders.size() - 1;
+}
+
 void Object::loadShaderFromFile(GLenum type, const std::string &filename)
 {
-    m_pShader->loadFromFile(type, filename);
+    m_shaders[m_activeShdr].loadFromFile(type, filename);
+}
+
+void Object::loadShaderFromFile(const std::string & filename)
+{
+    m_shaders[m_activeShdr].loadFromFile(filename);
 }
 
 void Object::createAndLinkShaderProgram()
 {
-    m_pShader->createAndLinkProgram();
+    m_shaders[m_activeShdr].createAndLinkProgram();
+}
+
+void Object::setActiveShaderSlot(int idx)
+{
+    m_activeShdr = idx;
+    glUseProgram(m_shaders[idx].getProgramID());
 }
 
 void Object::setIndices3(const std::vector<Index3> &indices3)
@@ -138,7 +158,7 @@ void Object::unbindAll()
 {
     this->unbindBuffers();
     glBindVertexArray(0);
-    m_pShader->unbind();
+    m_shaders[m_activeShdr].unbind();
 }
 
 void Object::unbindBuffers()

@@ -18,18 +18,20 @@ public:
 
     void loadFromString(GLenum type, const std::string &source);
     void loadFromFile(GLenum type, const std::string &filename);
+    void loadFromFile(const std::string &filename);
     void createAndLinkProgram();
     void bind();
     void unbind();
     void addAttribute(const std::string &attribute);
     void addUniform(const std::string &uniform);
+    GLuint getProgramID();
     void deleteProgram();
 
     GLuint operator[](const std::string &attribute);
     GLuint operator()(const std::string &uniform);
 
 private:
-    enum ShaderType { VERTEX_SHADER = 0, FRAGMENT_SHADER = 1, GEOMETRY_SHADER = 2 };
+    enum ShaderType { NONE = -1, VERTEX_SHADER = 0, FRAGMENT_SHADER = 1, GEOMETRY_SHADER = 2 };
 
     GLuint m_program;
     int m_totalShaders;

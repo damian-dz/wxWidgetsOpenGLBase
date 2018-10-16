@@ -138,8 +138,8 @@ void GLPane::prepareGLObjects()
     generateIndices(indices3.data(), WIDTH, HEIGHT, IdxMode::BL2TR);
 
     m_pObj = new Object(vertices, indices3);
-    m_pObj->loadShaderFromFile(GL_VERTEX_SHADER, "Basic.vert");
-    m_pObj->loadShaderFromFile(GL_FRAGMENT_SHADER, "Basic.frag");
+    m_pObj->addShaderSlot();
+    m_pObj->loadShaderFromFile("Basic.glsl");
     m_pObj->createAndLinkShaderProgram();
     m_pObj->bindAll();
     m_pObj->fillBuffers();
@@ -150,15 +150,14 @@ void GLPane::render(wxPaintEvent &evt)
 {
     if (IsShown()) {
         wxPaintDC(this);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);       
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         m_pObj->bindAll();
         m_pObj->draw();
         m_pObj->unbindAll();
         glFlush();
         SwapBuffers();
         m_frameCnt++;
-        std::cout << '\r' << estimateFPS(m_tStart, m_frameCnt) << " FPS";
-       
+        std::cout << '\r' << estimateFPS(m_tStart, m_frameCnt) << " FPS";     
     }
 }
 
