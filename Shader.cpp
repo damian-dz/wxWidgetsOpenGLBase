@@ -56,8 +56,8 @@ void Shader::loadFromFile(const std::string &filename)
 {
     std::ifstream file;
     file.open(filename.c_str(), std::ios_base::in);
-    ShaderType type = NONE;
     if (file) {
+        ShaderType type = NONE;
         std::stringstream ss[3];
         std::string line;
         while (std::getline(file, line)) {
