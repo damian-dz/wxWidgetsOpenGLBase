@@ -115,6 +115,12 @@ uint32_t Object::getVertexID()
     return m_vertexID;
 }
 
+void Object::addShader(const Shader &shader)
+{
+    m_shaders.push_back(shader);
+    m_activeShdr = m_shaders.size() - 1;
+}
+
 void Object::addShaderSlot()
 {
     m_shaders.push_back(Shader());

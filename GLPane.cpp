@@ -138,9 +138,10 @@ void GLPane::prepareGLObjects()
     generateIndices(indices3.data(), WIDTH, HEIGHT, IdxMode::BL2TR);
 
     m_pObj = new Object(vertices, indices3);
-    m_pObj->addShaderSlot();
-    m_pObj->loadShaderFromFile("Basic.glsl");
-    m_pObj->createAndLinkShaderProgram();
+    Shader shader;
+    shader.loadFromFile("Basic.glsl");
+    shader.createAndLinkProgram();
+    m_pObj->addShader(shader);
     m_pObj->bindAll();
     m_pObj->fillBuffers();
     m_pObj->unbindAll();  

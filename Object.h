@@ -40,6 +40,7 @@ public:
     uint32_t getIndex3ID();
     uint32_t getVaoID();
     uint32_t getVertexID();
+    void addShader(const Shader &shader);
     void addShaderSlot();
     void loadShaderFromFile(GLenum type, const std::string &filename);
     void loadShaderFromFile(const std::string &filename);
