@@ -135,8 +135,8 @@ int GLPane::getHeight()
 
 void GLPane::prepareGLObjects()
 {
-    constexpr int WIDTH = 30;
-    constexpr int HEIGHT = 40;
+    constexpr int WIDTH = 20;
+    constexpr int HEIGHT = 20;
     std::vector<Vertex> vertices(HEIGHT * WIDTH);
     std::vector<Index3> indices3((HEIGHT - 1) * (WIDTH - 1) * 2);
     generatePoints(vertices.data(), -0.8f, 0.8f, -0.8f, 0.8f, WIDTH, HEIGHT);
