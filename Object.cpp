@@ -132,7 +132,7 @@ void Object::loadShaderFromFile(GLenum type, const std::string &filename)
     m_shaders[m_activeShdr].loadFromFile(type, filename);
 }
 
-void Object::loadShaderFromFile(const std::string & filename)
+void Object::loadShaderFromFile(const std::string &filename)
 {
     m_shaders[m_activeShdr].loadFromFile(filename);
 }
@@ -146,6 +146,11 @@ void Object::setActiveShaderSlot(int idx)
 {
     m_activeShdr = idx;
     glUseProgram(m_shaders[idx].getProgramID());
+}
+
+void Object::setUniformMat4f(const std::string &name, float *data, bool transpose)
+{
+    m_shaders[m_activeShdr].setUniformMat4f(name, data, transpose);
 }
 
 void Object::setIndices3(const std::vector<Index3> &indices3)

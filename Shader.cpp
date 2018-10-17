@@ -4,11 +4,13 @@
 
 Shader::Shader() : m_totalShaders(0)
 {
-    for (int i = 0; i < 3; ++i) {
-        m_shaders[i] = 0;
-    }
-    m_attributeList.clear();
-    m_uniformLocationList.clear();
+    initializeShader();
+}
+
+Shader::Shader(const std::string &filename) : m_totalShaders(0)
+{
+    initializeShader();
+    loadFromFile(filename);
 }
 
 Shader::~Shader()
@@ -131,6 +133,13 @@ void Shader::addUniform(const std::string &uniform)
     m_uniformLocationList[uniform] = glGetUniformLocation(m_program, uniform.c_str());
 }
 
+void Shader::setUniformMat4f(const std::string &name, float *data, bool transpose)
+{
+    glUseProgram(m_program);
+    glUniformMatrix4fv(m_uniformLocationList[name], 1, transpose, data);
+    glUseProgram(0);
+}
+
 GLuint Shader::getProgramID()
 {
     return m_program;
@@ -149,4 +158,13 @@ GLuint Shader::operator[](const std::string &attribute)
 GLuint Shader::operator()(const std::string &uniform)
 {
     return m_uniformLocationList[uniform];
+}
+
+void Shader::initializeShader()
+{
+    for (int i = 0; i < 3; ++i) {
+        m_shaders[i] = 0;
+    }
+    m_attributeList.clear();
+    m_uniformLocationList.clear();
 }

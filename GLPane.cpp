@@ -1,5 +1,7 @@
 #include "GLPane.h"
 
+#include <gtc/matrix_transform.hpp>;
+
 #include <iomanip>
 
 enum IdxMode
@@ -87,7 +89,8 @@ double estimateFPS(std::chrono::time_point<std::chrono::system_clock> &start, in
 GLPane::GLPane(wxFrame *parent, int *args) :
     wxGLCanvas(parent, wxID_ANY, args, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE),
     m_frameCnt(0),
-    m_tStart(std::chrono::system_clock::now())
+    m_tStart(std::chrono::system_clock::now()),
+    m_angle(0.f)
 {
     m_pContext = new wxGLContext(this);
     wxGLCanvas::SetCurrent(*m_pContext);
@@ -102,7 +105,7 @@ GLPane::GLPane(wxFrame *parent, int *args) :
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
 
-    SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+    SetBackgroundStyle(wxBG_STYLE_PAINT);
     std::cout << std::fixed << std::setprecision(2);
 }
 
@@ -115,6 +118,8 @@ GLPane::~GLPane()
 void GLPane::resized(wxSizeEvent &WXUNUSED(evt))
 {
     glViewport(0, 0, (GLsizei)getWidth(), (GLsizei)getHeight());
+    float ar = getWidth() / (float)getHeight();
+    m_proj = glm::ortho(-1.1f * ar, 1.1f * ar, -1.1f, 1.1f, -1.0f, 1.0f);
     Refresh();
 }
 
@@ -134,13 +139,12 @@ void GLPane::prepareGLObjects()
     constexpr int HEIGHT = 40;
     std::vector<Vertex> vertices(HEIGHT * WIDTH);
     std::vector<Index3> indices3((HEIGHT - 1) * (WIDTH - 1) * 2);
-    generatePoints(vertices.data(), -0.9, 0.9, -0.9, 0.9, WIDTH, HEIGHT);
+    generatePoints(vertices.data(), -0.8f, 0.8f, -0.8f, 0.8f, WIDTH, HEIGHT);
     generateIndices(indices3.data(), WIDTH, HEIGHT, IdxMode::BL2TR);
-
     m_pObj = new Object(vertices, indices3);
-    Shader shader;
-    shader.loadFromFile("Basic.glsl");
+    Shader shader("Basic.glsl");
     shader.createAndLinkProgram();
+    shader.addUniform("uMVP");
     m_pObj->addShader(shader);
     m_pObj->bindAll();
     m_pObj->fillBuffers();
@@ -151,14 +155,17 @@ void GLPane::render(wxPaintEvent &evt)
 {
     if (IsShown()) {
         wxPaintDC(this);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);      
+        glm::mat4 mvp = glm::rotate(m_proj, m_angle, glm::vec3(1.f, 1.f, 1.f));
+        m_angle += 0.05f;
+        m_pObj->setUniformMat4f("uMVP", &mvp[0][0]);
         m_pObj->bindAll();
         m_pObj->draw();
         m_pObj->unbindAll();
         glFlush();
         SwapBuffers();
         m_frameCnt++;
-        std::cout << '\r' << estimateFPS(m_tStart, m_frameCnt) << " FPS";     
+        std::cout << '\r' << estimateFPS(m_tStart, m_frameCnt) << " FPS";
     }
 }
 

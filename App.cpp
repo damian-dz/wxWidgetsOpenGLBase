@@ -7,10 +7,10 @@ extern "C" {
 void openDebuggingWindow()
 {
     AllocConsole();
-    freopen("conin$", "r", stdin);
-    freopen("conout$", "w", stdout);
-    freopen("conout$", "w", stderr);
-    printf("Debugging Window:\n");
+    std::freopen("conin$", "r", stdin);
+    std::freopen("conout$", "w", stdout);
+    std::freopen("conout$", "w", stderr);
+    std::printf("Debugging Window:\n");
 }
 
 bool OpenGLApp::OnInit()

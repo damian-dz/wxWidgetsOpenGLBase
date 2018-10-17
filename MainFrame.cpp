@@ -37,8 +37,8 @@ void MainFrame::setFrameDimensions()
 {
     int scrWidth = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);
     int scrHeight = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);
-    constexpr int frmWidth = 1024;
-    constexpr int frmHeight = 640;
+    constexpr int frmWidth = 640;
+    constexpr int frmHeight = 480 + 59;
     SetSize((scrWidth - frmWidth) / 2, (scrHeight - frmHeight) / 2, frmWidth, frmHeight);
 }
 

@@ -14,6 +14,7 @@ class Shader
 {
 public:
     Shader();
+    Shader(const std::string &filename);
     ~Shader();
 
     void loadFromString(GLenum type, const std::string &source);
@@ -24,6 +25,7 @@ public:
     void unbind();
     void addAttribute(const std::string &attribute);
     void addUniform(const std::string &uniform);
+    void setUniformMat4f(const std::string &name, float *data, bool transpose = false);
     GLuint getProgramID();
     void deleteProgram();
 
@@ -38,6 +40,8 @@ private:
     GLuint m_shaders[3];
     std::map<std::string, GLuint> m_attributeList;
     std::map<std::string, GLuint> m_uniformLocationList;
+
+    void initializeShader();
 };
 
 #endif // !SHADER_H

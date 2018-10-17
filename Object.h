@@ -46,6 +46,7 @@ public:
     void loadShaderFromFile(const std::string &filename);
     void createAndLinkShaderProgram();
     void setActiveShaderSlot(int idx);
+    void setUniformMat4f(const std::string &name, float *data, bool transpose = false);
     void setIndices3(const std::vector<Index3> &indices3);
     void setVertices(const std::vector<Vertex> &vertices);
     void unbindAll();
