@@ -59,7 +59,7 @@ void Object::bindBuffers()
 
 void Object::draw()
 {
-    glDrawElements(GL_TRIANGLES, getByteSizeOfIndices3(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, m_indices3.size(), GL_UNSIGNED_INT, 0);
 }
 
 void Object::emptyAll()
